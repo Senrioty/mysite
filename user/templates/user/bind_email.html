@@ -1,0 +1,62 @@
+{% extends 'form.html' %}
+
+{# 添加多余的按钮 #}
+{% block other_buttons %}
+    <button id="send_code" class="btn btn-primary">发送验证码</button>
+{% endblock %}
+
+
+{# 添加js代码 #}
+{% block script_extends %}
+    <script type="text/javascript">
+        $("#send_code").click(function () {
+            var email = $("#id_email").val();
+            if(email === ''){
+                $("#tip").text("*邮箱不能为空");
+                return false;
+            }
+
+            //发送验证码
+            $.ajax({
+                url: '{% url 'send_verification_code' %}',
+                type: 'GET',
+                async: false,
+                data:{
+                    'email':email,
+                    'send_for':'bind_email_code'
+                },
+                cache: false,
+                success: function (data) {
+                    if(data['status'] === 'ERROR'){
+                        alert(data['status']);
+                    }
+                },
+                error: function (xhr) {
+                    console.log(xhr)
+                }
+            });
+
+
+            //把按钮变灰，并且一个时间倒计时
+            $(this).addClass('disabled');
+            $(this).attr('disabled', true);
+            var time = 30;
+            $(this).text(time + 's');
+            var interval =setInterval(() =>{   //使用了箭头函数，按理是function(){} 但是这样$(this)就获取不到这个按钮了，因为是在这个定时器的function方法里，所以我们用箭头函数，是上下文保持一致
+                if(time <= 0 ){
+                    clearInterval(interval);
+                    $(this).removeClass('disabled');
+                    $(this).attr('disabled', false);
+                    $(this).text('发送验证码');
+                    return false;
+                }
+                time -- ;
+                $(this).text(time + 's');
+            }, 1000);
+
+            return false;
+        });
+    
+    
+    </script>
+{% endblock %}

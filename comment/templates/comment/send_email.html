@@ -1,0 +1,11 @@
+{# 方式一 #}
+{#{{ comment_text|safe }}#}
+{#<a href="http://localhost:8001{{ url }}">点击查看</a>#}
+
+
+{# 方式二 #}
+{% autoescape off %}
+    <p>{{ comment_text }}</p>
+    <a href="http://localhost:8001{{ url }}">点击查看</a>
+{% endautoescape %}
+

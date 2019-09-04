@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+
+    {# 显示标题  #}
+    {% block title %}
+        我的网站|错误
+    {% endblock %}
+
+
+    {% block nav_home_active %}
+        active
+    {% endblock %}
+
+    {# 显示内容 #}
+    {% block content %}
+      {{ message }}，<a href="{{ redirect_to }}">返回</a>
+    {% endblock %}

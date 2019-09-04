@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+
+    {# 显示标题  #}
+    {% block title %}
+        我的网站|登录
+    {% endblock %}
+
+
+    {% block nav_home_active %}
+        active
+    {% endblock %}
+
+    {# 显示内容 #}
+    {% block content %}
+        <div class="containter">
+            <div class="row">
+                <div class="col-xs-4 col-xs-offset-4">
+                {% if not user.is_authenticated %}
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">登录</h3>
+                        </div>
+                        <div class="panel-body">
+                            {# action不填的话，默认是提交当前地址 #}
+                            <form action="" method="POST">
+                                {% csrf_token %}
+                                {% for filed in login_form %}
+                                    <label for="{{ filed.id_for_label }}">{{ filed.label }}</label>
+                                    {{ filed }}
+                                    <p class="text-danger">{{ filed.errors.as_text }}</p>
+                                {% endfor %}
+
+                                {# 这是引用html表单提交的前端代码 #}
+                                {# <span>用户名：</span>#}
+                                {# <input type="text" name="username">#}
+                                {# <span>密码：</span>#}
+                                {# <input type="password" name="password">#}
+
+                                <span class="text-danger">{{ login_form.non_field_errors }}</span>
+                                <div class="clearfix"></div>
+                                <a href="{% url 'forget_password' %}" class="pull-left">忘记密码</a>
+                                <input type="submit" value="登录" class="btn btn-primary pull-right">
+
+                            </form>
+                        </div>
+                    </div>
+                {% else %}
+                    <span>未登录，跳转到首页</span>
+                    <script type="text/javascript">
+                        window.location.href = "/"
+                    </script>
+                {% endif %}
+
+                </div>
+            </div>
+        </div>
+
+
+
+    {% endblock %}
