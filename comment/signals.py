@@ -19,15 +19,21 @@ def send_notification(sender, instance, **kwargs):
         if instance.content_type.model == 'blog':
             blog = instance.content_object
             verb = '{0}评论了你的博客《{1}》'.format(instance.user.get_nickname_or_username(), blog.title)
+            # url = blog.get_url() #发现与下面else里的get_url一样，都是博客，所以可以提取公共
         else:
             raise Exception('unkown comment object type')
     else:
         # 回复,其中strip_tags是为了去除html标签
         recipient = instance.reply_to
         verb = '{0}回复了你的评论“{1}”'.format(instance.user.get_nickname_or_username(), strip_tags(instance.parent.text))
+        # url = instance.content_object.get_url() #因为回复也是要跳转到相应的博客
+
+    # 需要拼接url，因为要跳转到相应的位置，需要注意的是，instance.pk这个是数值类型，而我们拼接是string类型，不能自动转换，所以要str()
+    url = instance.content_object.get_url() + '#comment_' + str(instance.pk)
 
     # 参数分别表示的意思是：通知者，接收者，接受内容，这个消息是从哪个地方出发的
-    notify.send(instance.user, recipient=recipient, verb=verb, action_object=instance)
+    # 最后一个url是自定义的，因为这个send支持传**kward,然后会保存到一个data的字段中，这个字段是json类型
+    notify.send(instance.user, recipient=recipient, verb=verb, action_object=instance, url=url)
 
 
 # 创建发送邮件的多线程

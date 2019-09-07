@@ -8,3 +8,6 @@ body {
 ul {
     list-style-type: none;
 }
+span.unread-count {
+   background-color: #d9534f!important;
+}

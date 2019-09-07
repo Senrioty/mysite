@@ -76,6 +76,9 @@ class Comment(models.Model):
     def get_user(self):
         return self.user
 
+    def get_url(self):
+        return self.content_object.get_url()
+
     def __str__(self):
         return self.text
 

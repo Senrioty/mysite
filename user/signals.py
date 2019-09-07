@@ -1,5 +1,6 @@
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from django.urls import reverse
 from notifications.signals import notify
 from .models import User
 
@@ -10,5 +11,6 @@ def send_notification(sender, instance, **kwargs):
     # 这个if语句是为了判断是第一次新建触发的user save，而不是诸如修改密码或者绑定邮箱的user save
     if kwargs['created'] == True:
         verb = '注册成功，更多精彩等你发现'
-        notify.send(instance.user, recipient=instance, verb=verb, action_object=instance)
+        url = reverse('user_info')  #跳转到个人信息页面
+        notify.send(instance.user, recipient=instance, verb=verb, action_object=instance, url=url)
 
