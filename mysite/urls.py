@@ -28,6 +28,8 @@ urlpatterns = [
     path('likes/', include('likes.urls')),
     path('user/', include('user.urls')),
     path('ckeditor', include('ckeditor_uploader.urls')),
+    path('notifications', include('notifications.urls')),
+    path('my_notifications', views.my_notifications, name='my_notifications'),
 
 ]
 urlpatterns += static(settings.MEDIA_URL, document_root = settings.MEDIA_ROOT)

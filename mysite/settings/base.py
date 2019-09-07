@@ -30,6 +30,7 @@ INSTALLED_APPS = [
     'comment',
     'likes',
     'user',
+    'notifications',
 ]
 
 
@@ -143,4 +144,10 @@ CACHES = {
         'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
         'LOCATION': 'my_cache_table',
     }
+}
+
+
+#django-notifications-hq配置
+DJANGO_NOTIFICATIONS_CONFIG = {
+    'USE_JSONFIELD': True,
 }

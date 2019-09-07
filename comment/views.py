@@ -4,6 +4,8 @@ from django.urls import reverse
 from django.http import JsonResponse
 from django.core.mail import send_mail
 from django.conf import settings
+from django.utils.html import strip_tags
+from notifications.signals import notify
 from .models import Comment
 from comment.forms import CommentForm
 
@@ -92,10 +94,10 @@ def update_comment(request):
             # 由于blog_detail的url需要传一个参数
 
             # 第一种做法是传一个args，是一个list
-            text = comment.text + '\n' + reverse('blog_detail', args=[comment.content_object.pk])
+            # text = comment.text + '\n' + reverse('blog_detail', args=[comment.content_object.pk])
 
             #第二种做法是，关键字传参，是个dict,其中key是url中写的
-            text = comment.text + '\n' + reverse('blog_detail', kwargs={'blog_pk':comment.content_object.pk})
+            # text = comment.text + '\n' + reverse('blog_detail', kwargs={'blog_pk':comment.content_object.pk})
 
             #第三种做法是,这个链接应该是由content_object来得到，所以要在Blog模型中新增一个get_url的方法，符合封装
             #由于是公共部分，所以都提出去了
@@ -107,10 +109,29 @@ def update_comment(request):
 
         if email != '':
             text = comment.text + '\n' + comment.content_object.get_url()
-            send_mail(subject, text, settings.EMAIL_HOST_USER, [email], fail_silently=False)
+            # send_mail(subject, text, settings.EMAIL_HOST_USER, [email], fail_silently=False)
 
-        # 方式二:使用异步来发送邮件
-        comment.send_email()
+        # # 方式二:使用异步来发送邮件  同样可以放到signals中
+        # comment.send_email()
+
+
+        # # 发送站内消息 (第一种方式) # 第二种方式是用signals
+        # if comment.reply_to is None:
+        #     # 评论
+        #     recipient = comment.content_object.get_user()
+        #     if comment.content_type.model == 'blog':
+        #         blog = comment.content_object
+        #         verb = '{0}评论了你的博客《{1}》'.format(comment.user.get_nickname_or_username(), blog.title)
+        #     else:
+        #         raise Exception('unkown comment object type')
+        # else:
+        #     # 回复,其中strip_tags是为了去除html标签
+        #     recipient = comment.reply_to
+        #     verb = '{0}回复了你的评论“{1}”'.format(comment.user.get_nickname_or_username(), strip_tags(comment.parent.text))
+        #
+        # # 参数分别表示的意思是：通知者，接收者，接受内容，这个消息是从哪个地方出发的
+        # notify.send(comment.user, recipient=recipient, verb=verb, action_object=comment)
+
 
         # 未使用ajax提交的代码
         # return redirect(referer)
