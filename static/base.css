@@ -11,3 +11,10 @@ ul {
 span.unread-count {
    background-color: #d9534f!important;
 }
+
+.search-form button[type="submit"] {
+    background: none;
+    border: none;
+    margin-left: -3em;
+    color: #aaa;
+}
